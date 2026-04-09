@@ -1,5 +1,9 @@
 let video;
 let audio;
+let fft;
+let bass = 0;
+let mids = 0;
+let highs = 0;
 
 function setup() {
   createCanvas(500, 400);
@@ -9,11 +13,24 @@ function setup() {
 
   audio = new p5.AudioIn();
   audio.start();
+
+  fft = new p5.FFT();
+  fft.setInput(audio);
 }
 
 function draw() {
   let volume = audio.getLevel();
+  fft.analyze();
+
+  // Energie delle principali bande di frequenza del microfono
+  bass = fft.getEnergy(20, 140);
+  mids = fft.getEnergy(400, 2600);
+  highs = fft.getEnergy(4000, 12000);
+
+  // console.log(highs);
   // console.log(volume);
+  // console.log('bass:', bass, 'mids:', mids, 'highs:', highs);
+  
   colorKey(video, 255, 0, 0, 200); // Mantieni solo i pixel rossi con una tolleranza di 200
   image(video, 0, 0, 500, 400);
   
